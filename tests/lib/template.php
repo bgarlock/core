@@ -46,7 +46,6 @@ class Test_TemplateFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals("This is a good string!", $result);
 	}
 
-
 	public function testPrintUnescaped() {
 		$htmlString = "<script>alert('xss');</script>";
 
@@ -66,5 +65,32 @@ class Test_TemplateFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals("This is a good string!", $result);
 	}
 
+	public function testRelativeDateToday(){
+		$currentTime = 1380703592;
+		$elementTime = $currentTime;
+		$result = (string)relative_modified_date($elementTime, $currentTime, true);
 
+		$this->assertEquals('today', $result);
+
+		$elementTime = $currentTime - 12 * 3600;
+		$result = (string)relative_modified_date($elementTime, $currentTime, true);
+
+		$this->assertEquals('today', $result);
+	}
+
+	public function testRelativeDateYesterday(){
+		$currentTime = 1380703592;
+		$elementTime = $currentTime - 24 * 3600;
+		$result = (string)relative_modified_date($elementTime, $currentTime, true);
+
+		$this->assertEquals('yesterday', $result);
+	}
+
+	public function testRelativeDate2DaysAgo(){
+		$currentTime = 1380703592;
+		$elementTime = $currentTime - 48 * 3600;
+		$result = (string)relative_modified_date($elementTime, $currentTime, true);
+
+		$this->assertEquals('2 days ago', $result);
+	}
 }

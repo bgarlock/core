@@ -174,10 +174,10 @@ OC.Share={
 			var allowPublicUploadStatus = false;
 
 			$.each(data.shares, function(key, value) {
-				if (allowPublicUploadStatus) {
+				if (value.share_type === OC.Share.SHARE_TYPE_LINK) {
+					allowPublicUploadStatus = (value.permissions & OC.PERMISSION_CREATE) ? true : false;
 					return true;
 				}
-				allowPublicUploadStatus = (value.permissions & OC.PERMISSION_CREATE) ? true : false;
 			});
 
 			html += '<input id="shareWith" type="text" placeholder="'+t('core', 'Share with')+'" />';
@@ -603,7 +603,18 @@ $(document).ready(function() {
 		if (!$('#showPassword').is(':checked') ) {
 			var itemType = $('#dropdown').data('item-type');
 			var itemSource = $('#dropdown').data('item-source');
-			OC.Share.share(itemType, itemSource, OC.Share.SHARE_TYPE_LINK, '', OC.PERMISSION_READ);
+			var allowPublicUpload = $('#sharingDialogAllowPublicUpload').is(':checked');
+			var permissions = 0;
+
+			// Calculate permissions
+			if (allowPublicUpload) {
+				permissions = OC.PERMISSION_UPDATE + OC.PERMISSION_CREATE + OC.PERMISSION_READ;
+			} else {
+				permissions = OC.PERMISSION_READ;
+			}
+
+
+			OC.Share.share(itemType, itemSource, OC.Share.SHARE_TYPE_LINK, '', permissions);
 		} else {
 			$('#linkPassText').focus();
 		}
